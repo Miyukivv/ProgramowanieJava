@@ -135,7 +135,6 @@ columnCount ustawiane przy pomocy konstruktora
             this.firstColumnIndex = firstColumnIndex;
             this.columnCount = columnCount;
         }
-
     }
 /*W klasie Country zdefiniuj prywatną, statyczną metodę getCountryColumns, która otrzyma jako parametry: napis będący pierwszym wierszem pliku CSV oraz napis zawierający poszukiwane państwo.
 Metoda powinna zwrócić obiekt klasy CountryColumns zawierający informację o początkowej kolumnie oraz liczbie kolumn poświęconej państwu. Jest to jednocześnie informacja, czy państwo posiada prowincje.
