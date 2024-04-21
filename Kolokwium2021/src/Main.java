@@ -1,13 +1,16 @@
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLOutput;
 import java.time.LocalDate;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) throws IOException, CountryNotFoundException {
-        Country.setFiles("confirmed_cases.csv", "deaths.csv");
+        File file=new File("Kolokwium2021/confirmed_cases.csv");
+        System.out.println(file.exists());
+
+
+        Country.setFiles("Kolokwium2021/confirmed_cases.csv", "Kolokwium2021/deaths.csv");
         Country country1 = Country.fromCsv("Afghanistan");
         if (country1 instanceof CountryWithoutProvinces) {
             System.out.println("kraj bez prowincji");

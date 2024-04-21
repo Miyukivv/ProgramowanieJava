@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<svg viewBox="0 0 2000 1000" xmlns="http://www.w3.org/2000/svg">
+<defs>
+	<linearGradient id="g1" >
+		<stop offset="0.400000" style="stop-color:yellow" />
+		<stop offset="0.600000" style="stop-color:orange" />
+	</linearGradient>
+	<filter id="f1" x="-100%" y="-100%" width="300%" height="300%">
+		<feOffset result="offOut" in="SourceAlpha" dx="5" dy="5" />
+		<feGaussianBlur result="blurOut" in="offOut" stdDeviation="5" />
+		<feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+	</filter>
+	<filter id="f2" x="-100%" y="-100%" width="300%" height="300%">
+		<feOffset result="offOut" in="SourceAlpha" dx="5" dy="5" />
+		<feGaussianBlur result="blurOut" in="offOut" stdDeviation="5" />
+		<feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+	</filter>
+</defs>
+
+	<polygon points="200,200 200,100 100,100 100,200 " style="fill:black;stroke:gray;stroke-width:5.0;" transform=" rotate(45.000000 2 2) translate(50 -300) scale(3 3)" filter="url(#f2)" />
+
+	<polygon points="100,20 180,60 180,140 100,180 20,140 20,60 " style="stroke:black;stroke-width:5.0;" fill="url(#g1)"  filter="url(#f2)" />
+</svg>
+
+</body>
+</html>

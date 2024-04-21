@@ -84,30 +84,30 @@ zawierający nazwę kraju, a zwróci polimorficzny obiekt typu Country*/
 
                 while (line!=null){
                     String[] partsOfLine = line.split(";");
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/dd/yy");
-                    LocalDate actualDate = LocalDate.parse(partsOfLine[0], formatter);
-                    int [] actualValueOfconfirmedCasesAndDeaths=countryWithoutProvinces.howManyConfirmedCasesAndDeaths(path1,path2,actualDate);
+                    //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/dd/yy");
+                    //LocalDate actualDate = LocalDate.parse(partsOfLine[0], formatter);
 
-                    countryWithoutProvinces.addDailyStatistic(actualDate, actualValueOfconfirmedCasesAndDeaths[0],actualValueOfconfirmedCasesAndDeaths[1]);
+                    //int [] actualValueOfconfirmedCasesAndDeaths=countryWithoutProvinces.howManyConfirmedCasesAndDeaths(path1,path2,actualDate);
+
+                    //countryWithoutProvinces.addDailyStatistic(actualDate, actualValueOfconfirmedCasesAndDeaths[0],actualValueOfconfirmedCasesAndDeaths[1]);
                     line=br.readLine();
                 }
-
-                return new CountryWithoutProvinces(nameOfCountry);
+                return countryWithoutProvinces;
             } else {
 
                 CountryWithProvinces countryWithProvinces=new CountryWithProvinces(nameOfCountry, null);
 
                 while (line!=null){
                     String[] partsOfLine = line.split(";");
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/dd/yy");
-                    LocalDate actualDate = LocalDate.parse(partsOfLine[0], formatter);
-//                    int [] actualValueOfconfirmedCasesAndDeaths=countryWithProvinces
+                   // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/dd/yy");
+                   // LocalDate actualDate = LocalDate.parse(partsOfLine[0], formatter);
+                   // int [] actualValueOfconfirmedCasesAndDeaths=countryWithProvinces
 
-//                    countryWithProvinces.addDailyStatistic(actualDate, actualValueOfconfirmedCasesAndDeaths[0],actualValueOfconfirmedCasesAndDeaths[1]);
+                    //countryWithProvinces.addDailyStatistic(actualDate, actualValueOfconfirmedCasesAndDeaths[0],actualValueOfconfirmedCasesAndDeaths[1]);
                     line=br.readLine();
                 }
 
-                return new CountryWithProvinces(nameOfCountry, null);
+                return countryWithProvinces;
             }
 
         } catch (IOException e) {
@@ -166,13 +166,8 @@ Wywołaj metodę getCountryColumns wewnątrz metody fromCsv i przekaż dalej rzu
 które przyjmują jako parametr datę, a zwracającą odpowiednio liczbę zdiagnozowanych przypadków i
 liczbę zgonów tego dnia. Zakładamy poprawność podanej daty.*/
 
-    public abstract getConfirmedCases(LocalDate date){
+   // public abstract getConfirmedCases(LocalDate date);
 
-        return;
-    }
-
-    public abstract getDeaths(LocalDate date){
-        return;
-    }
+   // public abstract getDeaths(LocalDate date);
 
 }
