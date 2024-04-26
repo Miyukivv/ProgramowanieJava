@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/PowtorzenieProjektNow/PowtorzenieProjektNow.iml" filepath="$PROJECT_DIR$/PowtorzenieProjektNow/PowtorzenieProjektNow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PowtorzenieProjektNowy.iml" filepath="$PROJECT_DIR$/PowtorzenieProjektNowy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ProjektPowtorzeniowyZZajec/ProjektPowtorzeniowyZZajec.iml" filepath="$PROJECT_DIR$/ProjektPowtorzeniowyZZajec/ProjektPowtorzeniowyZZajec.iml" />
+    </modules>
+  </component>
+</project>
