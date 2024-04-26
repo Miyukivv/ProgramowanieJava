@@ -66,11 +66,9 @@ public class CountryWithoutProvinces extends Country{
             line = br.readLine();
 
             List<String> countriesList = Arrays.asList(partsOfCountries);
-            List<String> partsOfProvince=new ArrayList<>();
-
 
             int indexOfCountry=countriesList.indexOf(getName());
-            int indexOfProvince=
+
 
             if (indexOfCountry == -1){
                 throw new CountryNotFoundException(getName());
@@ -103,6 +101,14 @@ public class CountryWithoutProvinces extends Country{
             this.illnesCases = illnesCases;
             this.deaths = deaths;
         }
+
+        public int getIllnesCases() {
+            return illnesCases;
+        }
+
+        public int getDeaths() {
+            return deaths;
+        }
     }
 
         /*
@@ -113,4 +119,31 @@ jako obiekty klasy LocalDate
     public void addDailyStatistic(LocalDate date, int illnesCases, int deaths){
         stats.put(date, new DailyStatistics(illnesCases,deaths));
     }
+
+    /*
+        /*W klasie Country napisz publiczne, czysto wirtualne metody getConfirmedCases oraz getDeaths,
+które przyjmują jako parametr datę, a zwracającą odpowiednio liczbę zdiagnozowanych przypadków i
+liczbę zgonów tego dnia. Zakładamy poprawność podanej daty.
+
+
+• w CountryWithoutProvinces należy podać wartości zapisane w zdefiniowanej strukturze,
+   */
+    @Override
+    public int getConfirmedCases(LocalDate date) {
+
+        return stats.get(date).illnesCases;
+    }
+
+    @Override
+    public int getDeaths(LocalDate date) {
+        return stats.get(date).deaths;
+    }
 }
+/*
+przeciążanie metody - w jednej klasie mamy metodę
+public int doCoś()
+public int doCoś(int a)
+public int doCoś(double b)
+public int doCoś(int a, int b)
+
+ */

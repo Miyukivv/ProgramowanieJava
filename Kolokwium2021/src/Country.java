@@ -1,10 +1,10 @@
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.text.SimpleDateFormat;
+import java.util.stream.Collectors;
+
 public abstract class Country {
     private final String name; //Zawiera nazwę państwa
 
@@ -28,7 +28,7 @@ public abstract class Country {
     }
 
 
-    /*
+ /*
 W klasie Country zdefiniuj statyczne, prywatne pola zawierające ścieżkę do obu plików CSV. Napisz
 statyczną metodę klasy Country o nazwie setFiles ustawiającą te dwa pliki na wartości swoich argu￾mentów.
 Metoda ta powinna zweryfikować, czy pliki istnieją i można je odczytać. Jeżeli nie będzie to
@@ -96,16 +96,26 @@ zawierający nazwę kraju, a zwróci polimorficzny obiekt typu Country*/
 
                 return countryWithoutProvinces;
             } else {
+                ArrayList<Country> provincesList=new ArrayList<>();
+                List<String> countries=Arrays.asList(lineWithCountries.split(";"));
 
-                CountryWithProvinces countryWithProvinces=new CountryWithProvinces(nameOfCountry, null);
+                List<String> splitedProvinces = List.of(provinces.split(";"));
+
+                for (int i=0; i<splitedProvinces.size(); i++){
+                    if (splitedProvinces.get(i).equals(nameOfCountry)){
+                        provincesList.add(new CountryWithoutProvinces((splitedProvinces.get(i))));
+                    }
+                }
+
+                CountryWithProvinces countryWithProvinces=new CountryWithProvinces(nameOfCountry, provincesList);
 
                 while (line!=null){
                     String[] partsOfLine = line.split(";");
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
                     LocalDate actualDate = LocalDate.parse(partsOfLine[0], formatter);
-                    int [] actualValueOfconfirmedCasesAndDeaths=countryWithProvinces
+                 //   int [] actualValueOfconfirmedCasesAndDeaths=
 
-                    countryWithProvinces.addDailyStatistic(actualDate, actualValueOfconfirmedCasesAndDeaths[0],actualValueOfconfirmedCasesAndDeaths[1]);
+               //     countryWithProvinces.addDailyStatistic(actualDate, actualValueOfconfirmedCasesAndDeaths[0],actualValueOfconfirmedCasesAndDeaths[1]);
                     line=br.readLine();
                 }
 
@@ -167,8 +177,120 @@ Wywołaj metodę getCountryColumns wewnątrz metody fromCsv i przekaż dalej rzu
 
     /*W klasie Country napisz publiczne, czysto wirtualne metody getConfirmedCases oraz getDeaths,
 które przyjmują jako parametr datę, a zwracającą odpowiednio liczbę zdiagnozowanych przypadków i
-liczbę zgonów tego dnia. Zakładamy poprawność podanej daty.*/
+liczbę zgonów tego dnia. Zakładamy poprawność podanej daty.
+*/
+
+    public abstract int getConfirmedCases(LocalDate date);
+
+    public abstract int getDeaths(LocalDate date);
+
+    /*
+                results.sort((DeathCauseStatistic disease1, DeathCauseStatistic disease2)->Integer.compare(
+                    disease1.getBracketForAge(age).getDeathCount(),
+                    disease2.getBracketForAge(age).getDeathCount()
+            ));
+     */
+
+    /*
+W klasie Country napisz publiczną, statyczną metodę sortByDeaths, która przyjmie listę obiektów
+Country oraz dwie daty: początkową i końcową. Metoda powinna posortować tablicę malejąco według
+liczby śmierci w okresie między datą początkową, a końcową włącznie z nimi. Zakładamy poprawność
+podanych dat oraz, że początkowa jest wcześniejsza niż końcowa
+     */
+    public static List<Country> sortByDeaths(List<Country> listOfCountry, LocalDate date1, LocalDate date2){
+        return listOfCountry.stream()
+                .sorted(Comparator.comparingInt(c -> getTotalDeaths(c, date1, date2)))
+                .collect(Collectors.toList());
+        }
+
+    private static int getTotalDeaths(Country country, LocalDate startDate, LocalDate endDate) {
+        int totalDeaths = 0;
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) { //Mamy początkową datę i za każdym razem dodajemy dzień
+            int deaths = country.getDeaths(date);
+            if (deaths > 0) {
+                totalDeaths += deaths;
+            }
+        }
+        return totalDeaths;
+    }
 
 
+        /*
+W klasie Country napisz publiczną metodę saveToDataFile, która przyjmie ścieżkę do pliku wynikowego. Zakładamy, że jest ona poprawna.
+Metoda powinna utworzyć plik składający się z trzech kolumn
+oddzielonych tabulatorami. W pierwszej kolumnie powinny znaleźć się daty w formacie d.MM.yy w drugiej liczba zdiagnozowanych przypadków w tym dniu,
+a w trzeciej liczba zgonów w tym dniu. W kolejnych
+wierszach pliku wynikowego należy zapisać wszystkie daty i odpowiadające im statystyki dostępne w plikach CSV.
+         */
+    private static Map<LocalDate, Integer> totalPerDate(String path) {
+        Map<LocalDate, Integer> map = new HashMap<>();
+        try {
+            BufferedReader bf = new BufferedReader(new FileReader(path.toString()));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy");
+            String line = bf.readLine();
+            line = bf.readLine();
+            while ((line = bf.readLine()) != null) {
+                List<String> split = Arrays.asList(line.split(";"));
+                Integer sum = split.stream().skip(1).mapToInt(Integer::parseInt).sum();
+                map.put(LocalDate.parse(split.get(0), formatter), sum);
+            }
+            bf.close();
+            return map;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void saveToDataFile(String path) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(path.toString()));
+            Map<LocalDate, Integer> mapOfDeaths = totalPerDate(path1);
+            Map<LocalDate, Integer> mapOfInfections = totalPerDate(path2);
+
+            for (Map.Entry<LocalDate, Integer> entry : mapOfDeaths.entrySet()) {
+                bw.write(entry.getKey().format(DateTimeFormatter.ofPattern("d.M.yy")));
+                bw.write("\t");
+                bw.write(entry.getValue().toString());
+                bw.write("\t");
+                bw.write(mapOfInfections.getOrDefault(entry.getKey(), 0).toString()); // GetOrDefault handles missing keys
+                bw.newLine();
+            }
+
+            bw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+/*
+Metoda totalPerDate(String path):
+
+    Ta metoda odczytuje dane z pliku podanego ścieżką path i zwraca mapę, gdzie kluczem jest data (LocalDate) a wartością jest suma liczby zgonów lub zakażeń w tej dacie.
+    Otwiera plik do odczytu za pomocą BufferedReader.
+    Tworzy obiekt DateTimeFormatter, który jest używany do parsowania dat z pliku tekstowego.
+    Wczytuje kolejne linie pliku, dzieli je na części za pomocą separatora ; i oblicza sumę wartości liczbowych poza datą.
+    Datę i sumę dodaje do mapy.
+    Obsługuje wyjątek IOException poprzez rzucenie RuntimeException.
+
+Metoda saveToDataFile(String path):
+
+Na początku metoda tworzy obiekt BufferedWriter, który umożliwia zapis do pliku tekstowego.
+Następnie dla każdej pary (klucz-wartość) w mapie zawierającej sumaryczną liczbę zgonów (mapOfDeaths) wykonuje się pętla for-each:
+entry.getKey().format(DateTimeFormatter.ofPattern("d.M.yy")) formatuje klucz (którym jest data) do postaci "d.M.yy" (dzień.miesiąc.rok) i zapisuje go do pliku.
+entry.getValue().toString() pobiera wartość (czyli sumaryczną liczbę zgonów) i zamienia ją na tekst, który jest zapisywany do pliku.
+mapOfInfections.getOrDefault(entry.getKey(), 0).toString() pobiera wartość z mapy zawierającej sumaryczną liczbę zakażeń dla tego samego klucza (czyli daty). Jeśli klucz nie istnieje w mapie zakażeń, metoda getOrDefault zwraca wartość domyślną 0.
+Następnie wartość ta jest zamieniana na tekst i zapisywana do pliku.
+ Po zapisaniu wszystkich danych, zamykany jest obiekt BufferedWriter, aby zwolnić zasoby.
+
+
+Map.Entry i entrySet():
+Map.Entry jest interfejsem w Javie, który reprezentuje pojedynczy wpis w mapie. W przypadku tej metody, `Map.Entry
+reprezentuje pojedynczą parę (klucz-wartość) w mapie, gdzie kluczem jest data (typu LocalDate), a wartością jest suma liczby zgonów lub liczby zakażeń (typu Integer).
+entrySet() jest metodą interfejsu Map, która zwraca zbiór wszystkich wpisów w mapie jako obiekt typu Set<Map.Entry<K, V>>. Każdy obiekt Map.Entry zawiera
+klucz i odpowiadającą mu wartość. Dzięki wywołaniu entrySet() można iterować po wszystkich wpisach w mapie za pomocą pętli for-each lub innych metod dostępnych dla zbiorów.
+
+W przypadku metody saveToDataFile,
+używając entrySet(), iterujemy po wszystkich wpisach w mapie zawierającej sumaryczną liczbę zgonów i pobieramy odpowiednie wartości z mapy zakażeń dla tych samych dat.
+
+    */
 
 }

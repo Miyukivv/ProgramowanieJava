@@ -16,10 +16,10 @@ public class CountryWithProvinces extends Country{
     public CountryWithProvinces(String name, ArrayList<Country> provinces) {
         super(name);
         if (provinces == null){
-            provinces=new ArrayList<>();
+            this.provinces=new ArrayList<>();
         }
         else {
-            provinces=this.provinces;
+            this.provinces=provinces;
         }
     }
 
@@ -49,4 +49,26 @@ public class CountryWithProvinces extends Country{
         return 0;
     }
 
+        /*W klasie Country napisz publiczne, czysto wirtualne metody getConfirmedCases oraz getDeaths,
+które przyjmują jako parametr datę, a zwracającą odpowiednio liczbę zdiagnozowanych przypadków i
+liczbę zgonów tego dnia. Zakładamy poprawność podanej daty.
+w CountryWithProvinces należy wywołać tę metodę rekurencyjnie dla wszystkich prowincji i zsumować wynik.
+*/
+    @Override
+    public int getConfirmedCases(LocalDate date) {
+        int totalConfirmedCases=0;
+        for (int i=0; i<provinces.size(); i++){
+            totalConfirmedCases+=provinces.get(i).getConfirmedCases(date);
+        }
+        return totalConfirmedCases;
+    }
+
+    @Override
+    public int getDeaths(LocalDate date) {
+        int totalDeaths=0;
+        for (int i=0; i<provinces.size(); i++){
+            totalDeaths+=provinces.get(i).getDeaths(date);
+        }
+        return totalDeaths;
+    }
 }
